@@ -1,6 +1,9 @@
 import { LayoutDashboard, Activity, Sprout, Droplets, Stethoscope, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar({ activeTab, setActiveTab }) {
+    const navigate = useNavigate();
+
     const menuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { id: 'sensors', label: 'Live Sensors', icon: Activity },
@@ -80,7 +83,8 @@ function Sidebar({ activeTab, setActiveTab }) {
                 background: 'rgba(255, 74, 74, 0.1)',
                 marginTop: 'auto',
                 transition: 'all 0.3s'
-            }}>
+            }}
+                onClick={() => navigate('/login')}>
                 <LogOut size={20} />
                 <span>Logout</span>
             </button>
