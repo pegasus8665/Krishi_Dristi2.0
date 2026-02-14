@@ -18,27 +18,42 @@ function DiseaseDetector() {
         }
     };
 
-    const handleAnalyze = () => {
+    const handleAnalyze = async () => {
         if (!image) return;
         setLoading(true);
+        setResult(null);
 
-        // Simulate ML Analysis
-        setTimeout(() => {
-            setLoading(false);
-            // Mock result (Randomly Healthy or Diseased)
-            const isDiseased = Math.random() > 0.3;
-            setResult(isDiseased ? {
-                status: 'Diseased',
-                disease: 'Early Blight',
-                confidence: '94%',
-                cure: 'Remove affected leaves immediately. Apply copper-based fungicides. Improve air circulation around plants.'
-            } : {
-                status: 'Healthy',
-                disease: 'None',
-                confidence: '98%',
-                cure: 'Plant looks healthy. Continue regular care routine.'
+        try {
+            // Convert base64/blob to file for upload
+            const response = await fetch(image);
+            const blob = await response.blob();
+            const file = new File([blob], "leaf.jpg", { type: "image/jpeg" });
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch("http://localhost:8000/predict", {
+                method: "POST",
+                body: formData
             });
-        }, 2500);
+
+            if (!res.ok) throw new Error("Prediction failed");
+
+            const data = await res.json();
+
+            setResult({
+                status: data.disease.includes("healthy") ? "Healthy" : "Diseased",
+                disease: data.disease.replace(/_/g, " "),
+                confidence: data.confidence,
+                cure: data.cure
+            });
+
+        } catch (error) {
+            console.error("Error analyzing image:", error);
+            alert("Failed to analyze image. Ensure backend is running.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
