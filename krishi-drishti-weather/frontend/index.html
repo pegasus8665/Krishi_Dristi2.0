@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Krishi Drishti - Weather-Based Farm Advisor</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <span class="logo-icon">🌾</span>
+                <h1>KRISHI DRISHTI</h1>
+            </div>
+            <p class="tagline">Weather-Based Farm Advisor</p>
+            <p class="subtitle">Live weather insights and agricultural recommendations</p>
+        </header>
+
+        <!-- Location Input Section -->
+        <section class="card input-section">
+            <form id="advisoryForm" class="input-form">
+                <div class="input-group">
+                    <label for="latitude">Latitude</label>
+                    <input type="number" id="latitude" name="latitude" step="0.0001" value="22.6726" required>
+                </div>
+                <div class="input-group">
+                    <label for="longitude">Longitude</label>
+                    <input type="number" id="longitude" name="longitude" step="0.0001" value="88.3476" required>
+                </div>
+                <button type="submit" id="submitBtn" class="btn-primary">
+                    <span class="btn-text">GET LIVE FARM ADVISORY</span>
+                </button>
+            </form>
+        </section>
+
+        <!-- Loading Indicator -->
+        <div id="loadingContainer" class="loading-container hidden">
+            <div class="spinner"></div>
+            <p id="loadingStatusText" class="loading-text">Fetching live weather...</p>
+        </div>
+
+        <!-- Error Message Display -->
+        <div id="errorContainer" class="error-container hidden">
+            <span class="error-icon">⚠️</span>
+            <div class="error-content">
+                <h3>Error Fetching Data</h3>
+                <p id="errorMessage">Unable to fetch weather data. Please check the backend connection and try again.</p>
+            </div>
+        </div>
+
+        <!-- Dashboard Output Container -->
+        <main id="dashboard" class="dashboard hidden">
+            
+            <!-- Weather Summary Grid -->
+            <section class="weather-summary-section">
+                <h2 class="section-title">Live Weather Overview</h2>
+                <div class="weather-grid">
+                    <div class="weather-card">
+                        <span class="weather-icon">🌡️</span>
+                        <span id="tempVal" class="metric-value">-- °C</span>
+                        <span class="metric-label">Temperature</span>
+                    </div>
+
+                    <div class="weather-card">
+                        <span class="weather-icon">🌧️</span>
+                        <span id="rainVal" class="metric-value">-- mm</span>
+                        <span class="metric-label">Rainfall (24h)</span>
+                    </div>
+
+                    <div class="weather-card">
+                        <span class="weather-icon">💧</span>
+                        <span id="probVal" class="metric-value">-- %</span>
+                        <span class="metric-label">Rain Probability</span>
+                    </div>
+
+                    <div class="weather-card">
+                        <span class="weather-icon">💦</span>
+                        <span id="humidityVal" class="metric-value">-- %</span>
+                        <span class="metric-label">Humidity</span>
+                    </div>
+
+                    <div class="weather-card">
+                        <span class="weather-icon">💨</span>
+                        <span id="windVal" class="metric-value">-- km/h</span>
+                        <span class="metric-label">Wind Speed</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agricultural Advisory Cards -->
+            <section class="advisory-section">
+                <h2 class="section-title">Agricultural Recommendations</h2>
+                <div class="advisory-grid">
+
+                    <!-- CARD 1: Irrigation -->
+                    <article class="advisory-card" id="cardIrrigation">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="card-icon">💧</span>
+                                <h3>IRRIGATION</h3>
+                            </div>
+                            <span id="irrigationPriority" class="badge">--</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="action-highlight" id="irrigationAction">--</div>
+                            <p class="reason-text" id="irrigationReason">--</p>
+                        </div>
+                    </article>
+
+                    <!-- CARD 2: Fertilizer -->
+                    <article class="advisory-card" id="cardFertilizer">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="card-icon">🌱</span>
+                                <h3>FERTILIZER</h3>
+                            </div>
+                            <span id="fertilizerPriority" class="badge">--</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="action-highlight" id="fertilizerAction">--</div>
+                            <p class="reason-text" id="fertilizerReason">--</p>
+                        </div>
+                    </article>
+
+                    <!-- CARD 3: Spraying -->
+                    <article class="advisory-card" id="cardSpraying">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="card-icon">🧪</span>
+                                <h3>SPRAYING</h3>
+                            </div>
+                            <span id="sprayingPriority" class="badge">--</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="action-highlight" id="sprayingAction">--</div>
+                            <p class="reason-text" id="sprayingReason">--</p>
+                        </div>
+                    </article>
+
+                    <!-- CARD 4: Heat Stress -->
+                    <article class="advisory-card" id="cardHeat">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="card-icon">🌡️</span>
+                                <h3>HEAT / TEMPERATURE</h3>
+                            </div>
+                            <span id="heatPriority" class="badge">--</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="action-highlight" id="heatStatus">--</div>
+                            <p class="reason-text" id="heatReason">--</p>
+                            <div class="recommendations-box">
+                                <h4>Recommended Actions:</h4>
+                                <ul id="heatRecommendationsList"></ul>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- CARD 5: Disease Risk -->
+                    <article class="advisory-card" id="cardDisease">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="card-icon">🍄</span>
+                                <h3>DISEASE-RISK CONDITIONS</h3>
+                            </div>
+                            <span id="diseasePriority" class="badge">--</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="action-highlight">Risk Level: <span id="diseaseRisk">--</span></div>
+                            <p class="reason-text" id="diseaseReason">--</p>
+                            <div class="recommendations-box">
+                                <h4>Recommended Actions:</h4>
+                                <ul id="diseaseRecommendationsList"></ul>
+                            </div>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- Timestamp Footer -->
+            <footer class="data-meta">
+                Generated at: <span id="generatedAt">--</span>
+            </footer>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
